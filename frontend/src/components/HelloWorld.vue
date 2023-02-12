@@ -4,6 +4,7 @@
     :items="items"
     class="elevation-1"
     :items-per-page="9"
+    :search="search"
   >
     <template v-slot:top>
       <v-toolbar
@@ -16,9 +17,17 @@
           vertical
         ></v-divider>
         <v-spacer></v-spacer>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search"
+        single-line
+        hide-details
+      ></v-text-field>
+        <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
-          max-width="500px"
+          max-width="400px"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -28,7 +37,7 @@
               v-bind="attrs"
               v-on="on"
             >
-              New Item
+              New Device
             </v-btn>
           </template>
           <v-card>
@@ -42,33 +51,25 @@
                   <v-col
                     cols="12"
                     sm="6"
-                    md="4"
+                    md="5"
                   >
                     <v-text-field
                       v-model="editedItem.name"
                       label="name"
                     ></v-text-field>
                   </v-col>
+                  <v-divider inset></v-divider>
                   <v-col
                     cols="12"
                     sm="6"
-                    md="4"
+                    md="5"
                   >
-                    <v-text-field
+                    <v-text-field 
                       v-model="editedItem.ip"
                       label="ip"
                     ></v-text-field>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.status"
-                      label="status"
-                    ></v-text-field>
-                  </v-col>
+             
                 </v-row>
               </v-container>
             </v-card-text>
@@ -105,6 +106,45 @@
         </v-dialog>
       </v-toolbar>
     </template>
+        <template v-slot:[`item.connections`]="{ item }">
+               <v-btn
+              color="primary"
+              dark
+              class="mb-1;mt-1"
+              @click="deleteItem(item)"
+            >
+              Ping
+            </v-btn>
+            <v-btn
+              color="primary"
+              dark
+              class="mb-1;mt-1"
+              style = "margin-left: 5%"
+              @click="deleteItem(item)"
+            >
+              SNMP
+            </v-btn>
+            <v-btn
+              color="primary"
+              dark
+              class="mb-1;mt-1"
+              style = "margin-left: 5%"
+              @click="deleteItem(item)"
+              v-if="item.status== 'Unmanaged'"
+            >
+              Manage
+            </v-btn>
+            <v-btn
+              color="primary"
+              dark
+              class="mb-1;mt-1"
+              style = "margin-left: 5%"
+              @click="deleteItem(item)"
+              v-if="item.status== 'Managed'"
+            >
+              Unmanage
+            </v-btn>
+    </template>
     <template v-slot:[`item.actions`]="{ item }">
       <v-icon
         small
@@ -119,7 +159,9 @@
       >
         mdi-delete
       </v-icon>
+      
     </template>
+
     <template v-slot:no-data>
       <v-btn
         color="primary"
@@ -152,13 +194,16 @@ Vue.use(IconsPlugin)
 
   export default {
     data: () => ({
+      search: '',
       dialog: false,
       dialogDelete: false,
       headers: [
         { text: 'Name', value: 'name', align: 'start'},
         { text: 'IP', value: 'ip' },
         { text: 'Status', value: 'status' },
-        { text: 'Actions', value: 'actions', sortable: false },
+        { text: 'Actions', value: 'connections', sortable: false },
+        { text: '', value: 'actions', sortable: false }
+       
       ],
       items: undefined,
       editedIndex: -1,
@@ -180,7 +225,7 @@ Vue.use(IconsPlugin)
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        return this.editedIndex === -1 ? 'New Device' : 'Edit Device'
       },
     },
 
@@ -195,12 +240,12 @@ Vue.use(IconsPlugin)
 
     created () {
       this.fetchSeed();
-  //       this.timer = setInterval(this.fetchSeed, 10000);
+      
     },
        mounted()
   {
      this.fetchSeed();
-
+     this.timer = setInterval(this.fetchSeed, 10000);
   },
 
     methods: {
