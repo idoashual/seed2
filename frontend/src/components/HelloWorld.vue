@@ -165,7 +165,7 @@
     <template v-slot:no-data>
       <v-btn
         color="primary"
-        @click="initialize"
+        @click="deleteItem(item)"
       >
         Reset
       </v-btn>
@@ -252,8 +252,8 @@ Vue.use(IconsPlugin)
                   fetchSeed () {
       Vue.axios.get('/getDevices')
     .then((res)=>{
-    this.items=res.data.data;
-    console.warn(res.data.data)
+    this.items=res.data;
+    console.warn(res.data)
     })
         },
       editItem (item) {

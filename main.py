@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import json
@@ -6,7 +6,7 @@ import pkg_resources
 import time
 import uvicorn
 from starlette.responses import PlainTextResponse, RedirectResponse, JSONResponse, FileResponse
-
+import utils as utils
 
 
 
@@ -49,10 +49,18 @@ async def home():
 
         
 
+# @app.get("/getDevices")
+# async def home():
+#         return json.loads(Devices)
 @app.get("/getDevices")
 async def home():
-        return json.loads(Devices)
+    devices = await utils.getDevices()
+    return Response(status_code=200, content=json.dumps(devices))
 
+@app.get("/addDevice/")
+async def manage(ip):
+    time.sleep(3)
+    return json.loads('{"status":"success","data":{ "ip":"'+ip+'"},"message":"Successfully! All records has been fetched."}')
 
 @app.get("/manage/")
 async def manage(ip):
