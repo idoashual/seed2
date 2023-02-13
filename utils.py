@@ -72,7 +72,25 @@ async def addDevice(name,ip):
         conn2.commit()
         print("user inserted")
         
-        return list(res)
+        return list([])
+    except Exception as ex:
+        reconnect()
+        print(ex)
+        return None
+
+async def editDevice(origin,name,ip):
+    try:
+        conn2 = reconnect()
+        print("insert user")
+        cur = conn2.cursor(dictionary=True)
+        sql = 'UPDATE inventory SET name="'+name+'",ip="'+ip+'" WHERE ip="'+origin+'";'
+        print(sql)
+        cur.execute(sql)
+        # res = cur.fetchall()
+        conn2.commit()
+        print("user inserted")
+        
+        return list([])
     except Exception as ex:
         reconnect()
         print(ex)
@@ -90,7 +108,7 @@ async def deleteDevice(name,ip):
         conn2.commit()
         print("user inserted")
         
-        return list(res)
+        return list([])
     except Exception as ex:
         reconnect()
         print(ex)

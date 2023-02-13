@@ -53,32 +53,48 @@ async def home():
 # async def home():
 #         return json.loads(Devices)
 @app.get("/getDevices")
-async def home():
+async def getDevices():
     devices = await utils.getDevices()
     return Response(status_code=200, content=json.dumps(devices))
 
 @app.put("/addDevice/")
-async def manage(name,ip):
+async def addDevice(name,ip):
+    name=name.strip()
+    ip = ip.strip()
+    for i in ip:
+        if i not in ["0","1","2","3","4","5","6","7","8","9","."]:
+            return Response(status_code=400, content=json.dumps(""))
     result= await utils.addDevice(name,ip)
     print(result)
     return Response(status_code=200, content=json.dumps(result))
 
+@app.post("/editDevice/")
+async def editDevice(origin,name,ip):
+    name=name.strip()
+    ip = ip.strip()
+    for i in ip:
+        if i not in ["0","1","2","3","4","5","6","7","8","9","."]:
+            return Response(status_code=400, content=json.dumps(""))
+    result= await utils.editDevice(origin,name,ip)
+    print(result)
+    return Response(status_code=200, content=json.dumps(result))
+
 @app.put("/deleteDevice/")
-async def manage(name,ip):
+async def deleteDevice(name,ip):
     result= await utils.deleteDevice(name,ip)
     print(result)
     return Response(status_code=200, content=json.dumps(result))
     
 
-@app.get("/manage/")
-async def manage(ip):
-    time.sleep(3)
-    return json.loads('{"status":"success","data":{ "ip":"'+ip+'"},"message":"Successfully! All records has been fetched."}')
+# @app.get("/manage/")
+# async def manage(ip):
+#     time.sleep(3)
+#     return json.loads('{"status":"success","data":{ "ip":"'+ip+'"},"message":"Successfully! All records has been fetched."}')
 
-@app.get("/unmanage/")
-async def manage(ip):
-    time.sleep(3)
-    return json.loads('{"status":"success","data":{ "ip":"'+ip+'"},"message":"Successfully! All records has been fetched."}')
+# @app.get("/unmanage/")
+# async def manage(ip):
+#     time.sleep(3)
+#     return json.loads('{"status":"success","data":{ "ip":"'+ip+'"},"message":"Successfully! All records has been fetched."}')
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8080, log_level="info")

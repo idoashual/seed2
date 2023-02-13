@@ -151,6 +151,7 @@
         small
         class="mr-2"
         @click="editItem(item)"
+        v-if="item.status== 'New'"
       >
         mdi-pencil
       </v-icon>
@@ -298,6 +299,12 @@ Vue.use(IconsPlugin)
 
       save () {
         if (this.editedIndex > -1) {
+          Vue.axios.post('/editDevice'+'?origin='+this.items[this.editedIndex].ip+'&name='+this.editedItem.name+'&ip='+this.editedItem.ip)
+          .then((res)=>{
+          // this.items=res.data;
+          console.warn(res.data)
+          this.close()
+         })
           Object.assign(this.items[this.editedIndex], this.editedItem)
         } else {
           Vue.axios.put('/addDevice'+'?name='+this.editedItem.name+'&ip='+this.editedItem.ip)
