@@ -18,24 +18,24 @@ def reconnect():
     return conn2    
 
 
-def executeSql(sql):
-    cur = conn2.cursor(dictionary=True)
-    #print(f"Executing: {sql}")
-    cur.execute(sql)
-    res = cur.rowcount
-    conn2.commit()
-    cur.close()
+# def executeSql(sql):
+#     cur = conn2.cursor(dictionary=True)
+#     #print(f"Executing: {sql}")
+#     cur.execute(sql)
+#     res = cur.rowcount
+#     conn2.commit()
+#     cur.close()
 
-    return res
+#     return res
 
-def querySql(sql):
-    cur = conn2.cursor(dictionary=True)
-    #print(f"Executing: {sql}")
-    cur.execute(sql)
-    res = cur.fetchall()
-    cur.close()
+# def querySql(sql):
+#     cur = conn2.cursor(dictionary=True)
+#     #print(f"Executing: {sql}")
+#     cur.execute(sql)
+#     res = cur.fetchall()
+#     cur.close()
 
-    return res
+#     return res
 
     # cur = conn2.cursor(dictionary=True)
     # cur.execute("select * from inventory;")
@@ -63,12 +63,31 @@ async def getDevices():
 async def addDevice(name,ip):
     try:
         conn2 = reconnect()
-        print("inser user")
+        print("insert user")
         cur = conn2.cursor(dictionary=True)
         sql = 'INSERT INTO inventory (name,ip, status) VALUES ("'+name+'", "'+ip+'", "New");'
+        print(sql)
         cur.execute(sql)
-        res = cur.fetchall()
-        cur.close()
+        # res = cur.fetchall()
+        conn2.commit()
+        print("user inserted")
+        
+        return list(res)
+    except Exception as ex:
+        reconnect()
+        print(ex)
+        return None
+
+async def deleteDevice(name,ip):
+    try:
+        conn2 = reconnect()
+        print("insert user")
+        cur = conn2.cursor(dictionary=True)
+        sql = 'DELETE FROM inventory WHERE ip="'+ip+'";'
+        print(sql)
+        cur.execute(sql)
+        # res = cur.fetchall()
+        conn2.commit()
         print("user inserted")
         
         return list(res)

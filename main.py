@@ -57,10 +57,18 @@ async def home():
     devices = await utils.getDevices()
     return Response(status_code=200, content=json.dumps(devices))
 
-@app.get("/addDevice/")
-async def manage(ip):
-    time.sleep(3)
-    return json.loads('{"status":"success","data":{ "ip":"'+ip+'"},"message":"Successfully! All records has been fetched."}')
+@app.put("/addDevice/")
+async def manage(name,ip):
+    result= await utils.addDevice(name,ip)
+    print(result)
+    return Response(status_code=200, content=json.dumps(result))
+
+@app.put("/deleteDevice/")
+async def manage(name,ip):
+    result= await utils.deleteDevice(name,ip)
+    print(result)
+    return Response(status_code=200, content=json.dumps(result))
+    
 
 @app.get("/manage/")
 async def manage(ip):

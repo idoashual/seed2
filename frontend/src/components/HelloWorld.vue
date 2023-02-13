@@ -1,5 +1,6 @@
 <template>
   <v-data-table
+    dark
     :headers="headers"
     :items="items"
     class="elevation-1"
@@ -31,7 +32,7 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              color="primary"
+              color="rgb(150, 150, 150)"
               dark
               class="mb-2"
               v-bind="attrs"
@@ -42,7 +43,7 @@
           </template>
           <v-card>
             <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
+              <span class="headline">{{ formTitle }}</span>
             </v-card-title>
 
             <v-card-text>
@@ -108,7 +109,7 @@
     </template>
         <template v-slot:[`item.connections`]="{ item }">
                <v-btn
-              color="primary"
+               color="rgb(150, 150, 150)"
               dark
               class="mb-1;mt-1"
               @click="deleteItem(item)"
@@ -116,7 +117,7 @@
               Ping
             </v-btn>
             <v-btn
-              color="primary"
+            color="rgb(150, 150, 150)"
               dark
               class="mb-1;mt-1"
               style = "margin-left: 5%"
@@ -125,7 +126,7 @@
               SNMP
             </v-btn>
             <v-btn
-              color="primary"
+            color="rgb(150, 150, 150)"
               dark
               class="mb-1;mt-1"
               style = "margin-left: 5%"
@@ -135,7 +136,7 @@
               Manage
             </v-btn>
             <v-btn
-              color="primary"
+            color="rgb(150, 150, 150)"
               dark
               class="mb-1;mt-1"
               style = "margin-left: 5%"
@@ -208,18 +209,18 @@ Vue.use(IconsPlugin)
       items: undefined,
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        // name: '',
+        // calories: 0,
+        // fat: 0,
+        // carbs: 0,
+        // protein: 0,
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        // name: '',
+        // calories: 0,
+        // fat: 0,
+        // carbs: 0,
+        // protein: 0,
       },
     }),
 
@@ -270,6 +271,12 @@ Vue.use(IconsPlugin)
 
       deleteItemConfirm () {
         this.items.splice(this.editedIndex, 1)
+        Vue.axios.put('/deleteDevice'+'?name='+this.editedItem.name+'&ip='+this.editedItem.ip)
+          .then((res)=>{
+          // this.items=res.data;
+          console.warn(res.data)
+          this.close()
+         })
         this.closeDelete()
       },
 
@@ -293,6 +300,12 @@ Vue.use(IconsPlugin)
         if (this.editedIndex > -1) {
           Object.assign(this.items[this.editedIndex], this.editedItem)
         } else {
+          Vue.axios.put('/addDevice'+'?name='+this.editedItem.name+'&ip='+this.editedItem.ip)
+          .then((res)=>{
+          // this.items=res.data;
+          console.warn(res.data)
+          this.close()
+         })
           this.items.push(this.editedItem)
         }
         this.close()
